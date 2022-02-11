@@ -51,16 +51,22 @@
 
   $('#app').bind('click', '#subtraction', function (e) {
     if(e.target.id == 'subtraction') {
-      console.log(123)
-      data.count--
-      $('#count').text(`所剩数量：${data.count}`)
+      let newNumber = state.count - 0 - 1
+      axios.get(`/book/count2?number=${newNumber}`).then(({data}) => {
+        let { count } = data
+        state.count = count
+        $('#count').text(`所剩数量：${data.count}`)
+      })
     }
   })
 
   $('#app').bind('click', '#clear', function (e) {
     if(e.target.id == 'clear') {
-      data.count = 0
-      $('#count').text(`所剩数量：${data.count}`)
+      axios.get(`/book/count2?number=0`).then(({data}) => {
+        let { count } = data
+        state.count = count
+        $('#count').text(`所剩数量：${data.count}`)
+      })
     }
   })
 
