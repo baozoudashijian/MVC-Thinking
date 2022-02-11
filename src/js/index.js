@@ -1,3 +1,8 @@
+/*
+*
+* 意大利面条式代码
+*
+*/
 (function () {
   let initialData = {
     name: 'JavaScript高级程序设计',
