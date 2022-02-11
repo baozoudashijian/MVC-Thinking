@@ -1,5 +1,5 @@
 (function () {
-
+  axios.defaults.baseURL = 'https://null.jsbin.com'
   axios.interceptors.response.use(
     response => {
       console.log(response)
@@ -15,13 +15,13 @@
 
   str = str.replace('__bookName', 'JavaScript高级程序设计').replace('__count', data.count)
 
-  axios.get('/book/count').then(({data}) => {
-    console.log(data);
+  axios.get('/book/count').then((response) => {
+    console.log(response);
   },(err) => {
     console.log(err)
   })
 
-  $('#box').prepend($(str))
+  $('#app').prepend($(str))
   $('#addition').bind('click', function () {
     data.count++
     $('#count').text(`所剩数量：${data.count}`)
