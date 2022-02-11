@@ -30,11 +30,24 @@
     }
   }
 
+  let view = {
+    el: '#app',
+    template: `
+    <p id="content">书籍《__bookName》<span id="count">所剩数量：__count</span></p>
+    <div>
+      <button id="addition">加1</button>
+      <button id="subtraction">减1</button>
+      <button id="clear">清0</button>
+    </div>
+    `,
+    render(data) {
+      let html = this.template.replace('__bookName', data.name).replace('__count', data.count)
+      $(this.el).html(html)
+    }
+  }
+
   model.fetch('count').then(({ data }) => {
-    let { name, count } = data
-    let originalHtml = $('#app').html()
-    let newHtml = originalHtml.replace('__bookName', name).replace('__count', count)
-    $('#app').html(newHtml)
+    view.render(data)
   }, (err) => {
     console.log(err)
   })
@@ -44,8 +57,8 @@
       let newNumber = model.data.count - 0 + 1
       console.log(newNumber)
       model.update(`count2`, newNumber).then(({ data }) => {
-        let { count } = data
-        $('#count').text(`所剩数量：${count}`)
+        // 或者model.data
+        view.render(data)
       })
 
     }
@@ -55,8 +68,8 @@
     if (e.target.id == 'subtraction') {
       let newNumber = model.data.count - 0 - 1
       model.update(`count2`, newNumber).then(({ data }) => {
-        let { count } = data
-        $('#count').text(`所剩数量：${count}`)
+        // 或者model.data
+        view.render(data)
       })
     }
   })
@@ -64,8 +77,8 @@
   $('#app').bind('click', '#clear', function (e) {
     if (e.target.id == 'clear') {
       model.update(`count2`, 0).then(({ data }) => {
-        let { count } = data
-        $('#count').text(`所剩数量：${count}`)
+        // 或者model.data
+        view.render(data)
       })
     }
   })
