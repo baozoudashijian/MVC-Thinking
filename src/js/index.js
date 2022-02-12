@@ -35,7 +35,7 @@
     el: '#app',
     template: `
       <div>
-        <p id="content">书籍《{{name}}》<span id="count">所剩数量：{{count}}</span></p>
+        <p id="content">书籍《{{book.name}}》<span id="count">所剩数量：{{book.count}}</span></p>
         <div>
           <button @click="additionFun">加1</button>
           <button @click="subtractionFun">减1</button>
@@ -44,35 +44,28 @@
       </div>
     `,
     data: {
-      name: '',
-      count: 0,
-      id: ''
+      book: {
+        name: '',
+        count: 0,
+        id: ''
+      }
     },
     methods: {
       additionFun() {
-        let newNumber = this.count - 0 + 1
+        let newNumber = this.book.count - 0 + 1
         model.update(`count2`, newNumber).then(({ data }) => {
-          let { name, count, id } = data
-          this.name = name
-          this.count = count
-          this.id = id
+          this.book = data
         })
       },
       subtractionFun(e) {
-        let newNumber = this.count - 0 - 1
+        let newNumber = this.book.count - 0 - 1
         model.update(`count2`, newNumber).then(({ data }) => {
-          let { name, count, id } = data
-          this.name = name
-          this.count = count
-          this.id = id
+          this.book = data
         })
       },
       clearFun(e) {
         model.update(`count2`, 0).then(({ data }) => {
-          let { name, count, id } = data
-          this.name = name
-          this.count = count
-          this.id = id
+          this.book = data
         })
       }
     }
@@ -84,10 +77,7 @@
       this.view = view
       this.model = model
       this.model.fetch('count').then(({ data }) => {
-        let { name, count, id } = data
-        this.view.name = name
-        this.view.count = count
-        this.view.id = id
+        this.view.book = data
       }, (err) => {
         console.log(err)
       })
