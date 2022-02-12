@@ -31,7 +31,7 @@
   })
 
 
-  let view = new Vue({
+  new Vue({
     el: '#app',
     template: `
       <div>
@@ -68,23 +68,15 @@
           this.book = data
         })
       }
-    }
-  })
-
-  let controller = {
-    init(options) {
-      let { view, model } = options
-      this.view = view
-      this.model = model
-      this.model.fetch('count').then(({ data }) => {
-        this.view.book = data
+    },
+    mounted() {
+      model.fetch('count').then(({ data }) => {
+        this.book = data
       }, (err) => {
         console.log(err)
       })
     }
-}
-
-  controller.init({ model, view })
+  })
 
 
 
