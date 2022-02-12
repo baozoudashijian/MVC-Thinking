@@ -8,7 +8,6 @@
   fakeData()
 
   function Model(options) {
-    this.data = options.data
     this.resource = options.resource
   }
   Model.prototype.fetch = function (id) {
@@ -28,90 +27,74 @@
   }
 
   let model = new Model({
+    resource: 'book'
+  })
+
+
+  let view = new Vue({
+    el: '#app',
+    template: `
+      <div>
+        <p id="content">书籍《{{name}}》<span id="count">所剩数量：{{count}}</span></p>
+        <div>
+          <button @click="additionFun" id="addition">加1</button>
+          <button @click="subtractionFun" id="subtraction">减1</button>
+          <button @click="clearFun" id="clear">清0</button>
+        </div>
+      </div>
+    `,
     data: {
       name: '',
       count: 0,
       id: ''
     },
-    resource: 'book'
-  })
-
-  function View(el, template) {
-    this.el = el
-    this.template = template
-  }
-
-  View.prototype.render = function (data) {
-    // prototype方法不能修改私有属性
-    // for (var key in data) {
-    //   this.template = this.template.replace(`__${key}`, data[key])
-    // }
-    // $(this.el).html(this.template)
-    let html = this.template
-    for (var key in data) {
-      html = html.replace(`__${key}`, data[key])
+    methods: {
+      additionFun() {
+        console.log(123)
+        let newNumber = this.count - 0 + 1
+        console.log(newNumber)
+        model.update(`count2`, newNumber).then(({ data }) => {
+          let { name, count, id } = data
+          this.name = name
+          this.count = count
+          this.id = id
+        })
+      },
+      subtractionFun(e) {
+        let newNumber = this.count - 0 - 1
+        model.update(`count2`, newNumber).then(({ data }) => {
+          let { name, count, id } = data
+          this.name = name
+          this.count = count
+          this.id = id
+        })
+      },
+      clearFun(e) {
+        model.update(`count2`, 0).then(({ data }) => {
+          let { name, count, id } = data
+          this.name = name
+          this.count = count
+          this.id = id
+        })
+      }
     }
-    $(this.el).html(html)
-  }
-
-  let view = new View('#app', `
-    <p id="content">书籍《__name》<span id="count">所剩数量：__count</span></p>
-    <div>
-      <button id="addition">加1</button>
-      <button id="subtraction">减1</button>
-      <button id="clear">清0</button>
-    </div>
-  `)
+  })
 
   let controller = {
     init(options) {
       let { view, model } = options
       this.view = view
       this.model = model
-      this.view.render(this.model.data)
-      this.bindEvents()
       this.model.fetch('count').then(({ data }) => {
-        this.view.render(data)
+        let { name, count, id } = data
+        this.view.name = name
+        this.view.count = count
+        this.view.id = id
       }, (err) => {
         console.log(err)
       })
-    },
-    additionFun(e) {
-      if (e.target.id == 'addition') {
-        let newNumber = model.data.count - 0 + 1
-        console.log(newNumber)
-        model.update(`count2`, newNumber).then(({ data }) => {
-          // 或者model.data
-          this.view.render(data)
-        })
-
-      }
-    },
-    subtractionFun(e) {
-      if (e.target.id == 'subtraction') {
-        let newNumber = model.data.count - 0 - 1
-        model.update(`count2`, newNumber).then(({ data }) => {
-          // 或者model.data
-          this.view.render(data)
-        })
-      }
-    },
-    clearFun(e) {
-      if (e.target.id == 'clear') {
-        model.update(`count2`, 0).then(({ data }) => {
-          // 或者model.data
-          this.view.render(data)
-        })
-      }
-    },
-    bindEvents() {
-      $(this.view.el).bind('click', '#addition', (e) => this.additionFun(e))
-
-      $(this.view.el).bind('click', '#subtraction', (e) => this.subtractionFun(e))
-
-      $(this.view.el).bind('click', '#clear', (e) => this.clearFun(e))
     }
-  }
+}
 
   controller.init({ model, view })
 
@@ -120,38 +103,38 @@
 
 
 
-  // Mock数据
+// Mock数据
 
-  function fakeData() {
-    let initialData = {
-      name: 'JavaScript高级程序设计',
-      count: 4,
-      id: 1
-    }
-    axios.defaults.baseURL = 'https://null.jsbin.com'
-    axios.interceptors.response.use(
-      response => {
-        let { method, url } = response.config
+function fakeData() {
+  let initialData = {
+    name: 'JavaScript高级程序设计',
+    count: 4,
+    id: 1
+  }
+  axios.defaults.baseURL = 'https://null.jsbin.com'
+  axios.interceptors.response.use(
+    response => {
+      let { method, url } = response.config
 
-        if (method == 'get' && url == '/book/count') {
-          response.data = initialData
-        }
-        if (method == 'get' && url.indexOf('/book/count2') >= 0) {
-
-          response.data = Object.assign(initialData, { count: getQueryVariable(url) })
-          console.log(Object.assign(initialData, { count: getQueryVariable(url) }))
-
-        }
-
-        return response
+      if (method == 'get' && url == '/book/count') {
+        response.data = initialData
       }
-    )
-  }
+      if (method == 'get' && url.indexOf('/book/count2') >= 0) {
 
-  function getQueryVariable(url) {
-    let res = url.split("?")[1].split('=')[1];
+        response.data = Object.assign(initialData, { count: getQueryVariable(url) })
+        console.log(Object.assign(initialData, { count: getQueryVariable(url) }))
 
-    return res;
-  }
+      }
 
-})()
+      return response
+    }
+  )
+}
+
+function getQueryVariable(url) {
+  let res = url.split("?")[1].split('=')[1];
+
+  return res;
+}
+
+}) ()
