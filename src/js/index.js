@@ -21,7 +21,7 @@
         return response
       })
     },
-    update(id,newNumber) {
+    update(id, newNumber) {
       return axios.get(`/book/${id}?number=${newNumber}`).then((response) => {
         this.data = response.data
 
@@ -46,42 +46,57 @@
     }
   }
 
-  model.fetch('count').then(({ data }) => {
-    view.render(data)
-  }, (err) => {
-    console.log(err)
-  })
+  let controller = {
+    init(options) {
+      let { view, model } = options
+      this.view = view
+      this.model = model
+      this.view.render(this.model.data)
+      this.bindEvents()
+      this.model.fetch('count').then(({ data }) => {
+        this.view.render(data)
+      }, (err) => {
+        console.log(err)
+      })
+    },
+    bindEvents() {
+      $(this.view.el).bind('click', '#addition', function (e) {
+        if (e.target.id == 'addition') {
+          let newNumber = model.data.count - 0 + 1
+          console.log(newNumber)
+          model.update(`count2`, newNumber).then(({ data }) => {
+            // 或者model.data
+            view.render(data)
+          })
 
-  $('#app').bind('click', '#addition', function (e) {
-    if (e.target.id == 'addition') {
-      let newNumber = model.data.count - 0 + 1
-      console.log(newNumber)
-      model.update(`count2`, newNumber).then(({ data }) => {
-        // 或者model.data
-        view.render(data)
+        }
       })
 
-    }
-  })
+      $(this.view.el).bind('click', '#subtraction', function (e) {
+        if (e.target.id == 'subtraction') {
+          let newNumber = model.data.count - 0 - 1
+          model.update(`count2`, newNumber).then(({ data }) => {
+            // 或者model.data
+            view.render(data)
+          })
+        }
+      })
 
-  $('#app').bind('click', '#subtraction', function (e) {
-    if (e.target.id == 'subtraction') {
-      let newNumber = model.data.count - 0 - 1
-      model.update(`count2`, newNumber).then(({ data }) => {
-        // 或者model.data
-        view.render(data)
+      $(this.view.el).bind('click', '#clear', function (e) {
+        if (e.target.id == 'clear') {
+          model.update(`count2`, 0).then(({ data }) => {
+            // 或者model.data
+            view.render(data)
+          })
+        }
       })
     }
-  })
+  }
 
-  $('#app').bind('click', '#clear', function (e) {
-    if (e.target.id == 'clear') {
-      model.update(`count2`, 0).then(({ data }) => {
-        // 或者model.data
-        view.render(data)
-      })
-    }
-  })
+  controller.init({model, view})
+
+
+
 
 
 
