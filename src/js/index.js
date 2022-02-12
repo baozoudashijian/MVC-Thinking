@@ -59,41 +59,44 @@
         console.log(err)
       })
     },
+    additionFun(e) {
+      if (e.target.id == 'addition') {
+        let newNumber = model.data.count - 0 + 1
+        console.log(newNumber)
+        model.update(`count2`, newNumber).then(({ data }) => {
+          // 或者model.data
+          view.render(data)
+        })
+
+      }
+    },
+    subtractionFun(e) {
+      if (e.target.id == 'subtraction') {
+        let newNumber = model.data.count - 0 - 1
+        model.update(`count2`, newNumber).then(({ data }) => {
+          // 或者model.data
+          view.render(data)
+        })
+      }
+    },
+    clearFun(e) {
+      if (e.target.id == 'clear') {
+        model.update(`count2`, 0).then(({ data }) => {
+          // 或者model.data
+          view.render(data)
+        })
+      }
+    },
     bindEvents() {
-      $(this.view.el).bind('click', '#addition', function (e) {
-        if (e.target.id == 'addition') {
-          let newNumber = model.data.count - 0 + 1
-          console.log(newNumber)
-          model.update(`count2`, newNumber).then(({ data }) => {
-            // 或者model.data
-            view.render(data)
-          })
+      $(this.view.el).bind('click', '#addition', (e) => this.additionFun(e))
 
-        }
-      })
+      $(this.view.el).bind('click', '#subtraction', (e) => this.subtractionFun(e))
 
-      $(this.view.el).bind('click', '#subtraction', function (e) {
-        if (e.target.id == 'subtraction') {
-          let newNumber = model.data.count - 0 - 1
-          model.update(`count2`, newNumber).then(({ data }) => {
-            // 或者model.data
-            view.render(data)
-          })
-        }
-      })
-
-      $(this.view.el).bind('click', '#clear', function (e) {
-        if (e.target.id == 'clear') {
-          model.update(`count2`, 0).then(({ data }) => {
-            // 或者model.data
-            view.render(data)
-          })
-        }
-      })
+      $(this.view.el).bind('click', '#clear', (e) => this.clearFun(e))
     }
   }
 
-  controller.init({model, view})
+  controller.init({ model, view })
 
 
 
