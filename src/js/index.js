@@ -37,9 +37,9 @@
       <div>
         <p id="content">书籍《{{name}}》<span id="count">所剩数量：{{count}}</span></p>
         <div>
-          <button @click="additionFun" id="addition">加1</button>
-          <button @click="subtractionFun" id="subtraction">减1</button>
-          <button @click="clearFun" id="clear">清0</button>
+          <button @click="additionFun">加1</button>
+          <button @click="subtractionFun">减1</button>
+          <button @click="clearFun">清0</button>
         </div>
       </div>
     `,
@@ -50,9 +50,7 @@
     },
     methods: {
       additionFun() {
-        console.log(123)
         let newNumber = this.count - 0 + 1
-        console.log(newNumber)
         model.update(`count2`, newNumber).then(({ data }) => {
           let { name, count, id } = data
           this.name = name
