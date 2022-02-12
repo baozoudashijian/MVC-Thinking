@@ -7,50 +7,61 @@
 
   fakeData()
 
-function Model(options) {
-  this.data = options.data
-  this.resource = options.resource
-}
-Model.prototype.fetch = function(id) {
-  return axios.get(`/${this.resource}/${id}`).then((response) => {
-    this.data = response.data
+  function Model(options) {
+    this.data = options.data
+    this.resource = options.resource
+  }
+  Model.prototype.fetch = function (id) {
+    return axios.get(`/${this.resource}/${id}`).then((response) => {
+      this.data = response.data
 
-    return response
+      return response
+    })
+  }
+
+  Model.prototype.update = function (id, newNumber) {
+    return axios.get(`/${this.resource}/${id}?number=${newNumber}`).then((response) => {
+      this.data = response.data
+
+      return response
+    })
+  }
+
+  let model = new Model({
+    data: {
+      name: '',
+      count: 0,
+      id: ''
+    },
+    resource: 'book'
   })
-}
 
-Model.prototype.update = function(id, newNumber) {
-  return axios.get(`/${this.resource}/${id}?number=${newNumber}`).then((response) => {
-    this.data = response.data
+  function View(el, template) {
+    this.el = el
+    this.template = template
+  }
 
-    return response
-  })
-}
+  View.prototype.render = function (data) {
+    // prototype方法不能修改私有属性
+    // for (var key in data) {
+    //   this.template = this.template.replace(`__${key}`, data[key])
+    // }
+    // $(this.el).html(this.template)
+    let html = this.template
+    for (var key in data) {
+      html = html.replace(`__${key}`, data[key])
+    }
+    $(this.el).html(html)
+  }
 
-let model = new Model({
-  data: {
-    name: '',
-    count: 0,
-    id: ''
-  },
-  resource: 'book'
-})
-
-  let view = {
-    el: '#app',
-    template: `
-    <p id="content">书籍《__bookName》<span id="count">所剩数量：__count</span></p>
+  let view = new View('#app', `
+    <p id="content">书籍《__name》<span id="count">所剩数量：__count</span></p>
     <div>
       <button id="addition">加1</button>
       <button id="subtraction">减1</button>
       <button id="clear">清0</button>
     </div>
-    `,
-    render(data) {
-      let html = this.template.replace('__bookName', data.name).replace('__count', data.count)
-      $(this.el).html(html)
-    }
-  }
+  `)
 
   let controller = {
     init(options) {
@@ -71,7 +82,7 @@ let model = new Model({
         console.log(newNumber)
         model.update(`count2`, newNumber).then(({ data }) => {
           // 或者model.data
-          view.render(data)
+          this.view.render(data)
         })
 
       }
@@ -81,7 +92,7 @@ let model = new Model({
         let newNumber = model.data.count - 0 - 1
         model.update(`count2`, newNumber).then(({ data }) => {
           // 或者model.data
-          view.render(data)
+          this.view.render(data)
         })
       }
     },
@@ -89,7 +100,7 @@ let model = new Model({
       if (e.target.id == 'clear') {
         model.update(`count2`, 0).then(({ data }) => {
           // 或者model.data
-          view.render(data)
+          this.view.render(data)
         })
       }
     },
