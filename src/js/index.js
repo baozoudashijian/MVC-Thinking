@@ -7,28 +7,34 @@
 
   fakeData()
 
+function Model(options) {
+  this.data = options.data
+  this.resource = options.resource
+}
+Model.prototype.fetch = function(id) {
+  return axios.get(`/${this.resource}/${id}`).then((response) => {
+    this.data = response.data
 
-  let model = {
-    data: {
-      name: '',
-      count: 0,
-      id: ''
-    },
-    fetch(id) {
-      return axios.get(`/book/${id}`).then((response) => {
-        this.data = response.data
+    return response
+  })
+}
 
-        return response
-      })
-    },
-    update(id, newNumber) {
-      return axios.get(`/book/${id}?number=${newNumber}`).then((response) => {
-        this.data = response.data
+Model.prototype.update = function(id, newNumber) {
+  return axios.get(`/${this.resource}/${id}?number=${newNumber}`).then((response) => {
+    this.data = response.data
 
-        return response
-      })
-    }
-  }
+    return response
+  })
+}
+
+let model = new Model({
+  data: {
+    name: '',
+    count: 0,
+    id: ''
+  },
+  resource: 'book'
+})
 
   let view = {
     el: '#app',
